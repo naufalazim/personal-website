@@ -54,29 +54,31 @@ export default function RootLayout({
       )}
       suppressHydrationWarning
     >
-      <body className="antialiased max-w-xl mx-4 mt-8 lg:mx-auto">
+      <body className="antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <a
-            href="#main-content"
-            className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded-md focus:bg-background focus:px-3 focus:py-2 focus:text-sm focus:font-medium focus:text-foreground focus:ring-2 focus:ring-ring"
-          >
-            Skip to content
-          </a>
-          <main
-            id="main-content"
-            className="flex-auto min-w-0 mt-6 flex flex-col px-2 md:px-0"
-          >
-            <Navbar />
-            {children}
-            <Footer />
-            <Analytics />
-            <SpeedInsights />
-          </main>
+          <div className="max-w-xl mx-4 mt-8 lg:mx-auto">
+            <a
+              href="#main-content"
+              className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded-md focus:bg-background focus:px-3 focus:py-2 focus:text-sm focus:font-medium focus:text-foreground focus:ring-2 focus:ring-ring"
+            >
+              Skip to content
+            </a>
+            <main
+              id="main-content"
+              className="flex-auto min-w-0 mt-6 flex flex-col px-2 md:px-0"
+            >
+              <Navbar />
+              {children}
+              <Footer />
+              <Analytics />
+              <SpeedInsights />
+            </main>
+          </div>
         </ThemeProvider>
       </body>
     </html>
