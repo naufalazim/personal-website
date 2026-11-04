@@ -1,17 +1,18 @@
+import { Badge } from '@/components/ui/badge';
 
 export const Skills = () => {
   const skillCategories = [
     {
-      title: "Backend & Core",
-      skills: ["Java", "Spring", "Guidewire", "Node.js", "REST APIs"],
+      title: 'Backend & Core',
+      skills: ['Java', 'Spring', 'Guidewire', 'Node.js', 'REST APIs'],
     },
     {
-      title: "Frontend",
-      skills: ["Angular", "React", "Next.js"],
+      title: 'Frontend',
+      skills: ['Angular', 'React', 'Next.js'],
     },
     {
-      title: "Industry & Tools",
-      skills: ["Banking", "Git", "Agile", "Gitlab CI/CD", "Azure DevOps"],
+      title: 'Industry & Tools',
+      skills: ['Banking', 'Git', 'Agile', 'Gitlab CI/CD', 'Azure DevOps'],
     },
   ];
 
@@ -28,12 +29,9 @@ export const Skills = () => {
             </h3>
             <div className="flex flex-wrap gap-2">
               {category.skills.map((skill) => (
-<span
-  key={skill}
-  className="rounded-md border border-neutral-200 bg-orange px-2 py-1 text-sm font-medium text-whit-600 dark:border-neutral-800 dark:text-orange-400"
->
-  {skill}
-</span>
+                <Badge key={skill} variant="outline">
+                  {skill}
+                </Badge>
               ))}
             </div>
           </div>

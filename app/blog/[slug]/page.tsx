@@ -1,31 +1,31 @@
-import { notFound } from 'next/navigation'
-import { CustomMDX } from 'app/components/mdx'
-import { formatDate, getBlogPosts } from 'app/blog/utils'
-import { baseUrl } from 'app/sitemap'
+import { notFound } from 'next/navigation';
+import { CustomMDX } from 'app/components/mdx';
+import { formatDate } from 'app/blog/utils';
+import { baseUrl } from 'app/sitemap';
+import { getPostBySlug } from '@/lib/posts';
 
-export async function generateStaticParams() {
-  let posts = getBlogPosts()
+export const dynamic = 'force-dynamic';
 
-  return posts.map((post) => ({
-    slug: post.slug,
-  }))
-}
-
-export function generateMetadata({ params }) {
-  let post = getBlogPosts().find((post) => post.slug === params.slug)
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
   if (!post) {
-    return
+    return;
   }
 
-  let {
+  const {
     title,
     publishedAt: publishedTime,
     summary: description,
     image,
-  } = post.metadata
-  let ogImage = image
+  } = post.metadata;
+  const ogImage = image
     ? image
-    : `${baseUrl}/og?title=${encodeURIComponent(title)}`
+    : `${baseUrl}/og?title=${encodeURIComponent(title)}`;
 
   return {
     title,
@@ -48,14 +48,19 @@ export function generateMetadata({ params }) {
       description,
       images: [ogImage],
     },
-  }
+  };
 }
 
-export default function Blog({ params }) {
-  let post = getBlogPosts().find((post) => post.slug === params.slug)
+export default async function Blog({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
 
   if (!post) {
-    notFound()
+    notFound();
   }
 
   return (
@@ -72,12 +77,12 @@ export default function Blog({ params }) {
             dateModified: post.metadata.publishedAt,
             description: post.metadata.summary,
             image: post.metadata.image
-              ? `${baseUrl}${post.metadata.image}`
-              : `/og?title=${encodeURIComponent(post.metadata.title)}`,
+              ? post.metadata.image
+              : `${baseUrl}/og?title=${encodeURIComponent(post.metadata.title)}`,
             url: `${baseUrl}/blog/${post.slug}`,
             author: {
               '@type': 'Person',
-              name: 'My Portfolio',
+              name: 'Naufal Azim',
             },
           }),
         }}
@@ -94,5 +99,5 @@ export default function Blog({ params }) {
         <CustomMDX source={post.content} />
       </article>
     </section>
-  )
+  );
 }
