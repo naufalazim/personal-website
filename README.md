@@ -1,5 +1,7 @@
 # naufalazim.com
 
+## This project I used AI Claude to enhance. My first time using AI Claude
+
 Personal portfolio and blog, built with Next.js (App Router), React, and TypeScript.
 
 Live at [naufalazim.com](https://naufalazim.com), deployed on [Vercel](https://vercel.com). Every push to `main` runs [GitHub Actions CI](.github/workflows/ci.yml) (lint, typecheck, test, build) and triggers a Vercel deploy.
