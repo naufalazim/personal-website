@@ -1,6 +1,5 @@
 # naufalazim.com
-
-## This project I used AI Claude to enhance. My first time using AI Claude
+<b>This project I used AI Claude to enhance. My first time using AI Claude</b>
 
 Personal portfolio and blog, built with Next.js (App Router), React, and TypeScript.
 
