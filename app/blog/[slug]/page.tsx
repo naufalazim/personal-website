@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { CustomMDX } from 'app/components/mdx';
 import { formatDate } from 'app/blog/utils';
-import { baseUrl } from 'app/sitemap';
+import { baseUrl } from '@/lib/site';
 import { getPostBySlug } from '@/lib/posts';
 
 export const dynamic = 'force-dynamic';

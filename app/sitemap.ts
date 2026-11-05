@@ -1,7 +1,5 @@
 import { getPublishedPosts } from '@/lib/posts';
-
-export const baseUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+import { baseUrl } from '@/lib/site';
 
 export const dynamic = 'force-dynamic';
 

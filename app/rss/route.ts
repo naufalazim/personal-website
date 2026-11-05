@@ -1,4 +1,4 @@
-import { baseUrl } from 'app/sitemap';
+import { baseUrl } from '@/lib/site';
 import { getPublishedPosts } from '@/lib/posts';
 
 // Queries the DB; without this, a bare GET route handler is statically
