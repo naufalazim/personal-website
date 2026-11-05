@@ -1,6 +1,10 @@
 import { baseUrl } from 'app/sitemap';
 import { getPublishedPosts } from '@/lib/posts';
 
+// Queries the DB; without this, a bare GET route handler is statically
+// cached at build time, same hazard as the pages listed in CLAUDE.md.
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const allBlogs = await getPublishedPosts();
 
