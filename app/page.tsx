@@ -58,7 +58,7 @@ export default function Page() {
             View all →
           </Link>
         </div>
-        <BlogPosts />
+        <BlogPosts limit={5} />
       </div>
     </section>
   );

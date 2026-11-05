@@ -2,8 +2,8 @@ import Link from 'next/link';
 import { formatDate } from 'app/blog/utils';
 import { getPublishedPosts } from '@/lib/posts';
 
-export async function BlogPosts() {
-  const allBlogs = await getPublishedPosts();
+export async function BlogPosts({ limit }: { limit?: number } = {}) {
+  const allBlogs = await getPublishedPosts(limit);
 
   return (
     <div>

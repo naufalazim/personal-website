@@ -1,6 +1,6 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, updateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { requireAdmin } from '@/lib/admin';
 import {
@@ -39,6 +39,7 @@ function parsePostForm(formData: FormData): Omit<NewPost, 'publishedAt'> {
 }
 
 function revalidateBlog(slug?: string) {
+  updateTag('posts');
   revalidatePath('/blog');
   revalidatePath('/sitemap.xml');
   revalidatePath('/rss');
