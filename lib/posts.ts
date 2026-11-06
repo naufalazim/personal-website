@@ -85,8 +85,20 @@ export const getPostBySlug = cache(
   )
 );
 
-export async function getAllPostsForAdmin(): Promise<Post[]> {
-  return db.select().from(posts).orderBy(desc(posts.createdAt));
+// The admin list only renders title/status/date, never the body — select
+// just those columns instead of pulling every post's full `content`.
+export async function getAllPostsForAdmin() {
+  return db
+    .select({
+      id: posts.id,
+      title: posts.title,
+      status: posts.status,
+      publishedAt: posts.publishedAt,
+      createdAt: posts.createdAt,
+    })
+    .from(posts)
+    .orderBy(desc(posts.createdAt))
+    .limit(100);
 }
 
 export async function getPostById(id: string): Promise<Post | undefined> {
