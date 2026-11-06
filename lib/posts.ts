@@ -1,5 +1,6 @@
 import { and, desc, eq, ne } from 'drizzle-orm';
 import { unstable_cache } from 'next/cache';
+import { cache } from 'react';
 import { db } from '@/lib/db';
 import { posts, type NewPost, type Post } from '@/lib/db/schema';
 
@@ -8,9 +9,8 @@ import { posts, type NewPost, type Post } from '@/lib/db/schema';
 // without waiting out the revalidate window below.
 const POSTS_CACHE_TAG = 'posts';
 
-export type BlogPost = {
+export type BlogPostMeta = {
   slug: string;
-  content: string;
   metadata: {
     title: string;
     publishedAt: string;
@@ -19,10 +19,13 @@ export type BlogPost = {
   };
 };
 
-function toBlogPost(post: Post): BlogPost {
+export type BlogPost = BlogPostMeta & { content: string };
+
+function toBlogPostMeta(
+  post: Omit<Post, 'content'>
+): BlogPostMeta {
   return {
     slug: post.slug,
-    content: post.content,
     metadata: {
       title: post.title,
       publishedAt: (post.publishedAt ?? post.createdAt).toISOString(),
@@ -37,33 +40,49 @@ function toBlogPost(post: Post): BlogPost {
 // `force-dynamic` (see CLAUDE.md on why) — only the query result is
 // cached, invalidated instantly on publish/edit/delete via revalidateTag,
 // with `revalidate` below as a ceiling in case that ever gets missed.
+// Deliberately excludes `content` — nothing in the list/feed/sitemap
+// callers reads post bodies, only `getPostBySlug` (the detail page) does.
 export const getPublishedPosts = unstable_cache(
-  async (limit?: number): Promise<BlogPost[]> => {
+  async (limit?: number): Promise<BlogPostMeta[]> => {
     const query = db
-      .select()
+      .select({
+        slug: posts.slug,
+        title: posts.title,
+        excerpt: posts.excerpt,
+        coverImage: posts.coverImage,
+        publishedAt: posts.publishedAt,
+        createdAt: posts.createdAt,
+      })
       .from(posts)
       .where(eq(posts.status, 'published'))
       .orderBy(desc(posts.publishedAt));
 
     const rows = limit ? await query.limit(limit) : await query;
-    return rows.map(toBlogPost);
+    return rows.map(toBlogPostMeta);
   },
   ['published-posts'],
   { tags: [POSTS_CACHE_TAG], revalidate: 60 }
 );
 
-export const getPostBySlug = unstable_cache(
-  async (slug: string): Promise<BlogPost | undefined> => {
-    const [row] = await db
-      .select()
-      .from(posts)
-      .where(and(eq(posts.slug, slug), eq(posts.status, 'published')))
-      .limit(1);
+// Also wrapped in React's per-request `cache()`: app/blog/[slug]/page.tsx
+// calls this from both `generateMetadata` and the page body. Without this,
+// those are two independent calls that each wait on the DB connection —
+// unstable_cache only dedupes once a result has actually been cached, so
+// on a cold/retrying connection both calls queue for the same connection.
+export const getPostBySlug = cache(
+  unstable_cache(
+    async (slug: string): Promise<BlogPost | undefined> => {
+      const [row] = await db
+        .select()
+        .from(posts)
+        .where(and(eq(posts.slug, slug), eq(posts.status, 'published')))
+        .limit(1);
 
-    return row ? toBlogPost(row) : undefined;
-  },
-  ['post-by-slug'],
-  { tags: [POSTS_CACHE_TAG], revalidate: 60 }
+      return row ? { ...toBlogPostMeta(row), content: row.content } : undefined;
+    },
+    ['post-by-slug'],
+    { tags: [POSTS_CACHE_TAG], revalidate: 60 }
+  )
 );
 
 export async function getAllPostsForAdmin(): Promise<Post[]> {

@@ -35,6 +35,17 @@ const client =
     idle_timeout: 20,
     max_lifetime: 60 * 30, // recycle connections periodically so the pooler doesn't hold them forever
     ssl: 'require', // the pooler rejects plaintext connections; the DATABASE_URL itself doesn't encode sslmode
+    // Both default to unbounded: queue_timeout=0 means a second query (e.g.
+    // generateMetadata + page body both calling getPostBySlug) waits
+    // forever for this single connection if it's mid-retry, and the
+    // default backoff grows exponentially with no cap. Observed in
+    // practice: a transient network blip to the pooler turned into a
+    // request that hung for over an hour instead of failing in seconds.
+    queue_timeout: 10,
+    backoff: (attempt) => Math.min(attempt * 0.5, 3),
+    connection: {
+      statement_timeout: 10_000, // kill a stuck query server-side after 10s
+    },
   });
 
 if (process.env.NODE_ENV !== 'production') {
