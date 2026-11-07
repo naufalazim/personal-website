@@ -37,8 +37,7 @@ export default function Page() {
         <span className="font-bold text-yellow-500"> banking industry</span>,
         where I focused on optimizing performance and solving complex real-world
         problems. I’m a firm believer in clean code and continuous learning,
-        currently honing my expertise in enterprise architecture to transition
-        into a Senior Engineer role.
+        currently honing my expertise in enterprise architecture.
       </p>
       <div className="my-8">
         <ExperienceFlow />
