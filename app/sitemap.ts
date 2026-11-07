@@ -4,16 +4,21 @@ import { baseUrl } from '@/lib/site';
 export const dynamic = 'force-dynamic';
 
 export default async function sitemap() {
-  const posts = await getPublishedPosts();
-  const blogs = posts.map((post) => ({
-    url: `${baseUrl}/blog/${post.slug}`,
-    lastModified: post.metadata.publishedAt,
-  }));
-
   const routes = ['', '/blog'].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date().toISOString().split('T')[0],
   }));
+
+  let blogs: { url: string; lastModified: string }[] = [];
+  try {
+    const posts = await getPublishedPosts();
+    blogs = posts.map((post) => ({
+      url: `${baseUrl}/blog/${post.slug}`,
+      lastModified: post.metadata.publishedAt,
+    }));
+  } catch (error) {
+    console.error('sitemap: failed to load posts', error);
+  }
 
   return [...routes, ...blogs];
 }
