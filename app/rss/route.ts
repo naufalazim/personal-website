@@ -6,7 +6,14 @@ import { getPublishedPosts } from '@/lib/posts';
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const allBlogs = await getPublishedPosts();
+  // Degrade to an empty-but-valid feed rather than erroring, so feed
+  // readers get a parseable response if the DB is briefly unavailable.
+  let allBlogs: Awaited<ReturnType<typeof getPublishedPosts>> = [];
+  try {
+    allBlogs = await getPublishedPosts();
+  } catch (error) {
+    console.error('rss: failed to load posts', error);
+  }
 
   const itemsXml = allBlogs
     .map(
