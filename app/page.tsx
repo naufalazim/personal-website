@@ -29,15 +29,14 @@ export default function Page() {
         dedicated to building high-performance, scalable systems that power the
         banking and insurance sectors. Currently at
         <span className="font-bold text-orange-500"> PwC</span> , I specialize
-        in Guidewire development (Java), modernizing core insurance platforms.
+        in Java development, modernizing core insurance platforms.
       </p>
 
       <p className="mb-4">
         My background includes architecting full-stack solutions for the
         <span className="font-bold text-yellow-500"> banking industry</span>,
         where I focused on optimizing performance and solving complex real-world
-        problems. I’m a firm believer in clean code and continuous learning,
-        currently honing my expertise in enterprise architecture.
+        problems.
       </p>
       <div className="my-8">
         <ExperienceFlow />
